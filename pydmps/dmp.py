@@ -216,88 +216,6 @@ class DMPs(object):
             self.ddy = np.zeros(self.n_dmps)
             self.cs.reset_state()
 
-    def step(self, tau=1.0, error=0.0, external_force=None):
-        """Run the DMP system for a single timestep.
-
-        tau float: scales the timestep
-                   increase tau to make the system execute faster
-        error float: optional system feedback
-        """
-
-        error_coupling = 1.0 / (1.0 + abs(error))
-        # run canonical system
-        x = self.cs.step(tau=tau, error_coupling=error_coupling)
-
-        # generate basis function activation
-        psi = self.gen_psi(x)
-
-        for d in range(self.n_dmps):
-
-            # generate the forcing term    
-            f = self.gen_front_term(x, d) * np.nan_to_num(np.dot(psi, self.w[d]) /  np.sum(psi))
-
-            # DMP acceleration
-            self.ddy[d] = (self.ay[d] * (self.by[d] * (self.goal[d] - self.y[d]) - self.dy[d]) + f) 
-            if external_force is not None:
-                self.ddy[d] += external_force[d]
-
-            self.ddy[d] /= tau
-
-            self.acc[d] = self.ddy[d] / tau
-
-            self.dy[d] += (self.ddy[d] * self.dt)
-
-            self.vel[d] = self.dy[d] / tau
-            self.y[d] += self.vel[d] * self.dt
-
-        return self.y, self.vel,  self.acc, x
-
-
-    def step_Koutras(self, tau=1.0, error=0.0, external_force=None, goal = None, goal_vel = None):
-        """Run the DMP system for a single timestep.
-
-        tau float: scales the timestep
-                   increase tau to make the system execute faster
-        error float: optional system feedback
-        """
-
-        self.goal = goal if goal is not None else self.goal
-        self.goal_vel = goal_vel if goal_vel is not None else self.goal_vel
-
-        error_coupling = 1.0 / (1.0 + abs(error))
-
-        # run canonical system
-        x = self.cs.x
-        
-        # generate basis function activation
-        psi = self.gen_psi(x)
-
-        for d in range(self.n_dmps):
-
-            # generate the forcing term    
-            f = self.gen_front_term(x, d) * np.dot(psi, self.w[d]) /  np.sum(psi)
-
-            e_current = self.goal[d] - self.y[d]
-           
-            # DMP acceleration
-            self.ddy[d] = -( self.ay[d] * (self.by[d] * e_current + self.dy[d]) + f) #* (1-x)
-            if external_force is not None:
-                self.ddy[d] += external_force[d]
-            self.ddy[d] /= tau  # z_dot
-
-            self.acc[d] = -(self.ddy[d] / tau) #+ goal_acc
-
-            self.dy[d] += (self.ddy[d] * self.dt) #z
-
-            e_dot = self.dy[d] / tau
-
-            self.vel[d] = self.goal_vel[d] - e_dot
-
-            self.y[d] += self.vel[d] * self.dt
-
-        self.cs.step(tau=tau, error_coupling=error_coupling)
-
-        return self.y, self.vel, self.acc, x
 
     def step_Kober(self, tau=1.0, error=0.0, external_force=None, goal = None, goal_vel = None):
         """Run the DMP system for a single timestep.
@@ -341,7 +259,6 @@ class DMPs(object):
             self.vel[d] = self.dy[d] / tau 
             
             self.y[d] += self.vel[d] * self.dt
- 
 
         self.cs.step(tau=tau, error_coupling=error_coupling)
 
