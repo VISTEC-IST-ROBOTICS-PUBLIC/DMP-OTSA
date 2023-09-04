@@ -14,6 +14,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+
+'''
+Modified by : Kongkiat Rothomphiwat
+This softawre is modified version of original software provided by Travis DeWolf.
+Modifications have been made to improve the DMP to make it adaptive to moving targets and disturbances.  
+'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -217,7 +224,7 @@ class DMPs(object):
             self.cs.reset_state()
 
 
-    def step_Kober(self, tau=1.0, error=0.0, external_force=None, goal = None, goal_vel = None):
+    def step(self, tau=1.0, error=0.0, external_force=None, goal = None, goal_vel = None):
         """Run the DMP system for a single timestep.
 
         tau float: scales the timestep

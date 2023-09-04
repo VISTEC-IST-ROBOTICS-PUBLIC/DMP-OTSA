@@ -1,8 +1,5 @@
 #!/usr/bin/env python
-import imp
 import io
-import sys
-import os
 
 try:
     from setuptools import setup
@@ -25,19 +22,11 @@ def read(*filenames, **kwargs):
 
 
 setup(
-    name="pydmps",
-    packages=["pydmps"],
-    version="0.2",
-    description="Python implementation of Dynamic Movement Primitives (DMPs)",
-    author="Travis DeWolf",
-    author_email="travis.dewolf@gmail.com",
-    url="https://github.com/studywolf/pydmps",
-    download_url="https://github.com/studywolf/pydmps/tarball/0.2",
-    keywords=[
-        "dmps",
-        "dynamic movement primitives",
-        "trajectory generation",
-        "control",
-    ],
-    classifiers=[],
+    name="DMP-OTSA",
+    packages=["DMP-OTSA"],
+    version="0.0",
+    description="DMP-OTSA",
+    author="Kongkiat Rothomphiwat",
+    author_email="palmkongkiet@gmail.com",
+    url="https://github.com/VISTEC-IST-ROBOTICS-PUBLIC/DMP-OTSA.git",
 )
